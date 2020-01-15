@@ -47,7 +47,7 @@ class Header extends Component {
 
 
                             <li>
-                                <Link to="/admin/order/list"> <i className="typcn typcn-messages mr-2"></i>Targets</Link>
+                                <Link to="/admin/target"> <i className="typcn typcn-messages mr-2"></i>Targets</Link>
                             </li>
 
                             <li>
