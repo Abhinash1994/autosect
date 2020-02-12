@@ -1,42 +1,72 @@
 import React, { Component } from 'react'
-import { Grid, Paper } from '@material-ui/core/';
+import { Grid, Paper, Button } from '@material-ui/core/';
 import CKEditor from "react-ckeditor-component";
 
 export default class Article extends Component {
     constructor(props) {
         super(props);
-        this.updateContent = this.updateContent.bind(this);
         this.state = {
             content: 'content',
+            codedisplay: [{ filename: "", code: "", paragraph: "" }],
         }
     }
-
-    updateContent(newContent) {
-        this.setState({
-            content: newContent
-        })
+    addClick() {
+        this.setState(prevState => ({
+            codedisplay: [...prevState.codedisplay, { filename: "", code: "", paragraph: "" }]
+        }))
     }
 
-    onChange(evt) {
-        console.log("onChange fired with event info: ", evt);
-        var newContent = evt.editor.getData();
-        this.setState({
-            content: newContent
-        })
+    createUI() {
+        return this.state.codedisplay.map((el, i) => (
+            <Grid container key={i} spacing={2}>
+                <Grid item md={3}>
+                    <div className="form-group ">
+                        <input type="text" className="form-control" name="filename" placeholder="filename" value={el.filename || ''} onChange={this.handleChange.bind(this, i)} />
+                    </div>
+                </Grid>
+                <Grid item md={4}>
+                    <div className="form-group ">
+                        <textarea className="form-control" placeholder="code" rows="4" name="code" value={el.code || ''} onChange={this.handleChange.bind(this, i)} ></textarea>
+                    </div>
+                </Grid>
+                <Grid item md={4}>
+                    <div className="form-group ">
+                        <textarea className="form-control" rows="4" placeholder="paragraph" name="paragraph" value={el.paragraph || ''} onChange={this.handleChange.bind(this, i)}></textarea>
+                    </div>
+                </Grid>
+                <Grid item md={1}>
+                    <div className="form-group ">
+                        <Button variant="contained" color="primary" onClick={this.removeClick.bind(this, i)}> remove </Button>
+                    </div>
+                </Grid>
+            </Grid>
+        ))
     }
 
-    onBlur(evt) {
-        console.log("onBlur event called with event info: ", evt);
+    handleChange(i, e) {
+        const { name, value } = e.target;
+        let codedisplay = [...this.state.codedisplay];
+        codedisplay[i] = { ...codedisplay[i], [name]: value };
+        this.setState({ codedisplay });
     }
 
-    afterPaste(evt) {
-        console.log("afterPaste event called with event info: ", evt);
+    removeClick(i) {
+        let codedisplay = [...this.state.codedisplay];
+        codedisplay.splice(i, 1);
+        this.setState({ codedisplay });
     }
+
+    handleSubmit(event) {
+        event.preventDefault();
+        console.log(JSON.stringify(this.state.codedisplay))
+    }
+
+
     render() {
         return (
 
             <div>
-                <Paper style={{background:'#eaeaea'}}>
+                <Paper style={{ background: '#eaeaea' }}>
                     <Grid container spacing={2}>
                         <Grid item md={2}>
                             <h1 style={{ paddingTop: '10px', fontSize: '20px' }}>Type : </h1>
@@ -116,15 +146,7 @@ export default class Article extends Component {
                         <Grid item md={12}>
                             <div className="form-group titlewe">
                                 <h1 style={{ paddingTop: '10px', fontSize: '20px' }}>Detail with Image : </h1>
-                                <CKEditor
-                                    activeClass="p10"
-                                    content={this.state.content}
-                                    events={{
-                                        "blur": this.onBlur,
-                                        "afterPaste": this.afterPaste,
-                                        "change": this.onChange
-                                    }}
-                                />
+                                <CKEditor activeClass="p10" content={this.state.content} />
                             </div>
                         </Grid>
                     </Grid>
@@ -132,73 +154,15 @@ export default class Article extends Component {
 
                     {/* 4nd row */}
                     <Paper>
-                        <h1 style={{ paddingTop: '10px', fontSize: '20px' }}>Code Display_1 : </h1>
-                        <Grid container spacing={2}>
-                            <Grid item md={4}>
-                                <div className="form-group ">
-                                    <input type="text" className="form-control" name="name" placeholder="index.js" />
-                                </div>
-                            </Grid>
-                            <Grid item md={4}>
-                                <div className="form-group ">
-                                    <textarea className="form-control" rows="4" placeholder="code write"></textarea>
-                                </div>
-                            </Grid>
-                            <Grid item md={4}>
-                                <div className="form-group ">
-                                    <textarea className="form-control" rows="4" placeholder="paragraph"></textarea>
-                                </div>
-                            </Grid>
-                        </Grid>
+                        <h1 style={{ paddingTop: '10px', fontSize: '20px' }}>Code Display: </h1>
+                        {this.createUI()}
+                        <Button variant="contained" color="secondary" onClick={this.addClick.bind(this)}> Add More </Button>
                     </Paper>
                     {/* close */}
 
-                    {/* 6nd row */}
-                    <Paper>
-                        <h1 style={{ paddingTop: '10px', fontSize: '20px' }}>Code Display_2 : </h1>
-                        <Grid container spacing={2}>
-                            <Grid item md={4}>
-                                <div className="form-group ">
-                                    <input type="text" className="form-control" name="name" placeholder="title" />
-                                </div>
-                            </Grid>
-                            <Grid item md={4}>
-                                <div className="form-group ">
-                                    <textarea className="form-control" rows="4" placeholder="code write"></textarea>
-                                </div>
-                            </Grid>
-                            <Grid item md={4}>
-                                <div className="form-group ">
-                                    <textarea className="form-control" rows="4" placeholder="paragraph"></textarea>
-                                </div>
-                            </Grid>
-                        </Grid>
-                    </Paper>
-                    {/* close */}
-
-                    {/* 6nd row */}
-                    <Paper>
-                        <h1 style={{ paddingTop: '10px', fontSize: '20px' }}>Code Display_3 : </h1>
-                        <Grid container spacing={2}>
-                            <Grid item md={4}>
-                                <div className="form-group ">
-                                    <input type="text" className="form-control" name="name" placeholder="title" />
-                                </div>
-                            </Grid>
-                            <Grid item md={4}>
-                                <div className="form-group ">
-                                    <textarea className="form-control" rows="4" placeholder="code write"></textarea>
-                                </div>
-                            </Grid>
-                            <Grid item md={4}>
-                                <div className="form-group ">
-                                    <textarea className="form-control" rows="4" placeholder="paragraph"></textarea>
-                                </div>
-                            </Grid>
-                        </Grid>
-                    </Paper>
-                    {/* close */}
-
+                    <Button variant="contained" color="secondary" onClick={(e)=>this.handleSubmit(e)}>
+                        Submit
+                    </Button>
                 </Paper>
             </div>
         )
